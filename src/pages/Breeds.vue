@@ -11,10 +11,8 @@
           :options="breeds"
           option-value="id"
           option-label="name"
-          
-          return-object                   
+          return-object
         >
-        
         </q-select>
         <q-carousel
           animated
@@ -27,27 +25,14 @@
           transition-prev="slide-right"
           transition-next="slide-left"
           @mouseenter="autoplay = false"
-          @mouseleave="autoplay = true"          
+          @mouseleave="autoplay = true"
         >
-         
-
           <q-carousel-slide
-            v-for="(item,i) in images" :key="i"
+            v-for="(item, i) in images"
+            :key="i"
             :name="item.id"
             :img-src="item.url"
           />
-          <!-- <q-carousel-slide
-            :name="2"
-            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
-          />
-          <q-carousel-slide
-            :name="3"
-            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
-          />
-          <q-carousel-slide
-            :name="4"
-            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
-          /> -->
         </q-carousel>
 
         <q-card-section>
@@ -166,24 +151,6 @@ export default {
       autoplay: ref(true),
       selected_breed: [],
       slide: 1,
-      slides: [
-        {
-          id: 1,
-          url: "https://cdn.quasar.dev/img/mountains.jpg",
-        },
-        {
-          id: 2,
-          url: "https://cdn.quasar.dev/img/parallax1.jpg",
-        },
-        {
-          id: 3,
-          url: "https://cdn.quasar.dev/img/parallax2.jpg",
-        },
-        {
-          id: 4,
-          url: "https://cdn.quasar.dev/img/quasar.jpg",
-        },
-      ],
     };
   },
   methods: {
@@ -193,9 +160,9 @@ export default {
       await ServicesBreeds.getBreeds()
         .then(function (response) {
           debugger;
-          console.log(response.data)
+          console.log(response.data);
           self.breeds = response.data;
-          self.selected_breed = self.breeds;          
+          self.selected_breed = self.breeds[10];
         })
         .catch(function () {
           console.log("deu erro");
@@ -210,7 +177,7 @@ export default {
       };
       await ServicesBreeds.getImages(query_params)
         .then(function (response) {
-          self.images = response.data;          
+          self.images = response.data;
         })
         .catch(function () {
           console.log("deu erro");
