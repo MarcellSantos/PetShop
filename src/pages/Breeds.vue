@@ -11,15 +11,37 @@
           :options="breeds"
           option-value="id"
           option-label="name"
+          @input="filterBreed(1)"
         >
         </q-select>
-        <q-carousel animated v-model="slide" arrows navigation infinite>
+        <q-carousel
+          animated
+          v-model="slide"
+          navigation
+          infinite
+          :autoplay="autoplay"
+          arrows
+          transition-prev="slide-right"
+          transition-next="slide-left"
+          @mouseenter="autoplay = false"
+          @mouseleave="autoplay = true"
+        >
           <q-carousel-slide
-            v-for="slide in slides"
-            :key="slide.id"
-            :name="slide.id"
-            :img-src="slide.url"
-          ></q-carousel-slide>
+            :name="1"
+            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
+          />
+          <q-carousel-slide
+            :name="2"
+            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
+          />
+          <q-carousel-slide
+            :name="3"
+            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
+          />
+          <q-carousel-slide
+            :name="4"
+            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
+          />
         </q-carousel>
 
         <q-card-section>
@@ -33,11 +55,93 @@
             <q-chip v-if="selected_breed.short_legs == 1">Short Legs</q-chip>
             <q-chip v-if="selected_breed.hypoallergenic == 1">Hypoallergenic</q-chip> -->
           </div>
-          <div class="text-subtitle2">by John Doe</div>
-         
+          <div class="text-subtitle2">Nome: {{ selected_breed.name }}</div>
         </q-card-section>
 
-        <q-card-section class="q-pt-none"> teste </q-card-section>
+        <q-card-section v-if="selected_breed.description">
+          Descrição: {{ selected_breed.description }}
+        </q-card-section>
+        <q-card-section v-if="selected_breed.temperament">
+          Temperamento: {{ selected_breed.temperament }}
+        </q-card-section>
+
+        <q-list>
+          <q-item>
+            <q-item-section>
+              Nível de Afeto
+              <q-rating
+                v-model="selected_breed.affection_level"
+                size="3em"
+                color="brown-5"
+                icon="pets"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              Adaptação
+              <q-rating
+                v-model="selected_breed.adaptability"
+                size="3em"
+                color="brown-5"
+                icon="pets"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              Amigo da Criança
+              <q-rating
+                v-model="selected_breed.child_friendly"
+                size="3em"
+                color="brown-5"
+                icon="pets"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              Nível de energia
+              <q-rating
+                v-model="selected_breed.energy_level"
+                size="3em"
+                color="brown-5"
+                icon="pets"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              Problemas de saúde
+              <q-rating
+                v-model="selected_breed.health_issues"
+                size="3em"
+                color="brown-5"
+                icon="pets"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              Inteligência
+              <q-rating
+                v-model="selected_breed.intelligence"
+                size="3em"
+                color="brown-5"
+                icon="pets"
+              />
+            </q-item-section>
+          </q-item>
+        </q-list>
+
+        <q-item tag="a" :href="selected_breed.wikipedia_url" clickable>
+          <q-item-section avatar>
+            <q-icon name="mail" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Wikipedia</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-card>
     </div>
   </q-page>
@@ -45,6 +149,7 @@
 
 <script>
 import ServicesBreeds from "src/services/theBreed";
+import { ref } from "vue";
 
 export default {
   name: "Breeds",
@@ -52,6 +157,7 @@ export default {
     return {
       images: [],
       breeds: [],
+      autoplay: ref(true),
       selected_breed: [],
       slide: 1,
       slides: [
@@ -80,26 +186,23 @@ export default {
 
       await ServicesBreeds.getBreeds()
         .then(function (response) {
-
           self.breeds = response.data;
-          console.log(response.data);
+          self.selected_breed = self.breeds[10];
         })
         .catch(function () {
           console.log("deu erro");
         });
     },
-    getImages: async function () {
+    getImages: async function (id) {
       var self = this;
 
       let query_params = {
-        breed_ids: "beng",
+        breed_ids: id,
         limit: 4,
       };
       await ServicesBreeds.getImages(query_params)
         .then(function (response) {
-          
           self.images = response.data;
-          console.log(response.data);
         })
         .catch(function () {
           console.log("deu erro");
@@ -109,15 +212,12 @@ export default {
   mounted() {
     var self = this;
     self.getBreeds();
-    self.getImages();
   },
-  computed: {
-    selected_breed() {
+  watch: {
+    selected_breed: function () {
       var self = this;
 
-      //self.getImages();
-      debugger;
-      console.log(self.selected_breed);
+      self.getImages(self.selected_breed.id);
     },
   },
 };
