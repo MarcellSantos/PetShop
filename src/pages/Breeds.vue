@@ -5,14 +5,16 @@
         <q-select
           clearable
           outlined
-          label="Cat"
+          label="Gato"
           color="blue-10"
           v-model="selected_breed"
           :options="breeds"
           option-value="id"
           option-label="name"
-          @input="filterBreed(1)"
+          
+          return-object                   
         >
+        
         </q-select>
         <q-carousel
           animated
@@ -21,16 +23,20 @@
           infinite
           :autoplay="autoplay"
           arrows
+          id="carrousel"
           transition-prev="slide-right"
           transition-next="slide-left"
           @mouseenter="autoplay = false"
-          @mouseleave="autoplay = true"
+          @mouseleave="autoplay = true"          
         >
+         
+
           <q-carousel-slide
-            :name="1"
-            :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
+            v-for="(item,i) in images" :key="i"
+            :name="item.id"
+            :img-src="item.url"
           />
-          <q-carousel-slide
+          <!-- <q-carousel-slide
             :name="2"
             :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
           />
@@ -41,7 +47,7 @@
           <q-carousel-slide
             :name="4"
             :img-src="'https://cdn2.thecatapi.com/images/' + 'ozEvzdVM-' + '.jpg'"
-          />
+          /> -->
         </q-carousel>
 
         <q-card-section>
@@ -186,8 +192,10 @@ export default {
 
       await ServicesBreeds.getBreeds()
         .then(function (response) {
+          debugger;
+          console.log(response.data)
           self.breeds = response.data;
-          self.selected_breed = self.breeds[10];
+          self.selected_breed = self.breeds;          
         })
         .catch(function () {
           console.log("deu erro");
@@ -202,7 +210,7 @@ export default {
       };
       await ServicesBreeds.getImages(query_params)
         .then(function (response) {
-          self.images = response.data;
+          self.images = response.data;          
         })
         .catch(function () {
           console.log("deu erro");
